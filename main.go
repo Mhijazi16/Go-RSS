@@ -10,15 +10,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type response struct {
-	Status string
-}
-
-func handleHome(w http.ResponseWriter, r *http.Request) {
-	var payload = response{Status: "success"}
-	respondWithJson(w, 200, payload)
-}
-
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -33,7 +24,10 @@ func main() {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 
-	router.Get("/health-check", handleHome)
+	healthRouter := chi.NewRouter()
+	healthRouter.Get("/health-check", handleHome)
+
+	router.Mount("/v1", healthRouter)
 
 	log.Printf("Starting server on port %s...\n", PORT)
 	log.Fatal(http.ListenAndServe(":"+PORT, router))
