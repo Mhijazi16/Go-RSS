@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -16,15 +15,8 @@ type response struct {
 }
 
 func handleHome(w http.ResponseWriter, r *http.Request) {
-	var data = response{Status: "success"}
-	var res, err = json.Marshal(data)
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(200)
-	w.Write(res)
+	var payload = response{Status: "success"}
+	respondWithJson(w, 200, payload)
 }
 
 func main() {
