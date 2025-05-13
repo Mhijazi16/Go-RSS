@@ -26,6 +26,7 @@ func main() {
 
 	healthRouter := chi.NewRouter()
 	healthRouter.Get("/health-check", handleHome)
+	healthRouter.Get("/admin-panel", handlAdmin)
 
 	router.Mount("/v1", healthRouter)
 
