@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -8,7 +9,13 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
+	"github.com/mhijazi16/Go-RSS/internal/database"
 )
+
+type apiConfig struct {
+	DB *database.Queries
+}
 
 func main() {
 	err := godotenv.Load(".env")
@@ -20,6 +27,18 @@ func main() {
 	if PORT == "" {
 		log.Fatal("make sure you set PORT in .env file.")
 	}
+
+	DBURL := os.Getenv("DBURL")
+	if DBURL == "" {
+		log.Fatal("make sure you set DBURL in .env file")
+	}
+
+	conn, err := sql.Open("postgres", DBURL)
+	if err != nil {
+		log.Fatal("failed to connect to database error: ", err)
+	}
+
+	config := apiConfig{DB: database.New(conn)}
 
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
