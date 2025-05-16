@@ -14,10 +14,6 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 	respondWithJson(w, 200, struct{ Status string }{Status: "success"})
 }
 
-func handlAdmin(w http.ResponseWriter, r *http.Request) {
-	respondWithError(w, 400, "failed getting the admin panel!")
-}
-
 func (db *apiConfig) createUser(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Name     string `json:"name"`
@@ -44,5 +40,5 @@ func (db *apiConfig) createUser(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, 400, fmt.Sprintf("failed to store object in database %s", err))
 	}
 
-	respondWithJson(w, 200, user)
+	respondWithJson(w, 200, toUserDTO(user))
 }
