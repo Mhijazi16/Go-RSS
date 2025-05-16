@@ -41,7 +41,7 @@ func (db *apiConfig) createUser(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, 400, fmt.Sprintf("failed to store object in database %s", err))
 	}
 
-	respondWithJson(w, 202, toUserDTO(user))
+	respondWithJson(w, 201, toUserDTO(user))
 }
 
 func (db *apiConfig) getUser(w http.ResponseWriter, r *http.Request, user database.User) {
