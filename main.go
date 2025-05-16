@@ -48,6 +48,7 @@ func main() {
 
 	userRouter := chi.NewRouter()
 	userRouter.Post("/", apiCfg.createUser)
+	userRouter.Get("/", apiCfg.getUser)
 
 	router.Mount("/v1/users", userRouter)
 	router.Mount("/v1", healthRouter)

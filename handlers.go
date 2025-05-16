@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/mhijazi16/Go-RSS/auth"
 	"github.com/mhijazi16/Go-RSS/internal/database"
 )
 
@@ -38,6 +39,22 @@ func (db *apiConfig) createUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("failed to store object in database %s", err))
+	}
+
+	respondWithJson(w, 202, toUserDTO(user))
+}
+
+func (db *apiConfig) getUser(w http.ResponseWriter, r *http.Request) {
+	apikey, err := auth.GetAPIKey(r.Header)
+	if err != nil {
+		respondWithError(w, 403, fmt.Sprintf("failed to authenticate user error: %s", err))
+		return
+	}
+
+	user, err := db.DB.GetUserByAPIKey(r.Context(), apikey)
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("failed to get user from database error: %s", err))
+		return
 	}
 
 	respondWithJson(w, 200, toUserDTO(user))
