@@ -28,7 +28,7 @@ func main() {
 		log.Fatal("make sure you set PORT in .env file.")
 	}
 
-	DBURL := os.Getenv("DBURL")
+	DBURL := os.Getenv("DB_URL")
 	if DBURL == "" {
 		log.Fatal("make sure you set DBURL in .env file")
 	}
@@ -38,15 +38,18 @@ func main() {
 		log.Fatal("failed to connect to database error: ", err)
 	}
 
-	config := apiConfig{DB: database.New(conn)}
+	apiCfg := apiConfig{DB: database.New(conn)}
 
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 
 	healthRouter := chi.NewRouter()
 	healthRouter.Get("/health-check", handleHome)
-	healthRouter.Get("/admin-panel", handlAdmin)
 
+	userRouter := chi.NewRouter()
+	userRouter.Post("/", apiCfg.createUser)
+
+	router.Mount("/v1/users", userRouter)
 	router.Mount("/v1", healthRouter)
 
 	log.Printf("Starting server on port %s...\n", PORT)

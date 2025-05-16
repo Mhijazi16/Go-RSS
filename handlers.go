@@ -1,7 +1,13 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/mhijazi16/Go-RSS/internal/database"
 )
 
 func handleHome(w http.ResponseWriter, r *http.Request) {
@@ -10,4 +16,33 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 
 func handlAdmin(w http.ResponseWriter, r *http.Request) {
 	respondWithError(w, 400, "failed getting the admin panel!")
+}
+
+func (db *apiConfig) createUser(w http.ResponseWriter, r *http.Request) {
+	type parameters struct {
+		Name     string `json:"name"`
+		Password string `json:"password"`
+	}
+
+	var userDTO parameters
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&userDTO)
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("failed to parse json %s", err))
+		return
+	}
+
+	user, err := db.DB.CreateUser(r.Context(), database.CreateUserParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Name:      userDTO.Name,
+		Password:  userDTO.Password,
+	})
+
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("failed to store object in database %s", err))
+	}
+
+	respondWithJson(w, 200, user)
 }
