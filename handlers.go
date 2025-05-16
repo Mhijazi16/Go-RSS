@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/mhijazi16/Go-RSS/auth"
 	"github.com/mhijazi16/Go-RSS/internal/database"
 )
 
@@ -46,4 +45,34 @@ func (db *apiConfig) createUser(w http.ResponseWriter, r *http.Request) {
 
 func (db *apiConfig) getUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	respondWithJson(w, 200, toUserDTO(user))
+}
+
+func (db *apiConfig) createFeed(w http.ResponseWriter, r *http.Request, user database.User) {
+	type requestBody struct {
+		URL string `json:"url"`
+	}
+
+	var feedDTO requestBody
+	var decoder = json.NewDecoder(r.Body)
+	var err = decoder.Decode(&feedDTO)
+
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("failed to parse request body error: %s", err))
+		return
+	}
+
+	feed, err := db.DB.CreateFeed(r.Context(), database.CreateFeedParams{
+		ID:        uuid.New(),
+		Url:       feedDTO.URL,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		UserID:    user.ID,
+	})
+
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("failed to create feed object, error: %s", err))
+		return
+	}
+
+	respondWithJson(w, 201, toFeedDTO(feed))
 }

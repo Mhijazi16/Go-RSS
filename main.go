@@ -50,7 +50,11 @@ func main() {
 	userRouter.Post("/", apiCfg.createUser)
 	userRouter.Get("/", apiCfg.authMiddleware(apiCfg.getUser))
 
+	feedRouter := chi.NewMux()
+	feedRouter.Post("/", apiCfg.authMiddleware(apiCfg.createFeed))
+
 	router.Mount("/v1/users", userRouter)
+	router.Mount("/v1/feeds", feedRouter)
 	router.Mount("/v1", healthRouter)
 
 	log.Printf("Starting server on port %s...\n", PORT)

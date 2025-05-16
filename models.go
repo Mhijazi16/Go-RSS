@@ -24,3 +24,19 @@ func toUserDTO(user database.User) User {
 		UpdatedAt: user.UpdatedAt,
 	}
 }
+
+type Feed struct {
+	ID        uuid.UUID `json:"id"`
+	Url       string    `json:"url"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func toFeedDTO(feed database.Feed) Feed {
+	return Feed{
+		Url:       feed.Url,
+		ID:        feed.ID,
+		CreatedAt: feed.CreatedAt,
+		UpdatedAt: feed.UpdatedAt,
+	}
+}
