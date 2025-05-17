@@ -86,3 +86,28 @@ func (db *apiConfig) getFeeds(w http.ResponseWriter, r *http.Request) {
 
 	respondWithJson(w, 200, toFeedsDTO(feeds))
 }
+
+func (db *apiConfig) FollowFeed(w http.ResponseWriter, r *http.Request, user database.User) {
+
+	type requestBody struct {
+		FeedId uuid.UUID `json:"feed_id"`
+	}
+
+	var body requestBody
+	decoder := json.NewDecoder(r.Body)
+	decoder.Decode(&body)
+
+	follow, err := db.DB.FollowFeed(r.Context(), database.FollowFeedParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		UserID:    user.ID,
+		FeedID:    body.FeedId,
+	})
+
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("failed to follow feed, error: %s", err))
+	}
+
+	respondWithJson(w, 201, toFeedFollowDTO(follow))
+}

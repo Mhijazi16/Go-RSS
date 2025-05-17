@@ -49,3 +49,15 @@ func toFeedsDTO(feeds []database.Feed) []Feed {
 
 	return objects
 }
+
+type FeedFollow struct {
+	UserId uuid.UUID `json:"user_id"`
+	FeedId uuid.UUID `json:"feed_id"`
+}
+
+func toFeedFollowDTO(follow database.FeedFollow) FeedFollow {
+	return FeedFollow{
+		UserId: follow.UserID,
+		FeedId: follow.FeedID,
+	}
+}
