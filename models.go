@@ -40,3 +40,12 @@ func toFeedDTO(feed database.Feed) Feed {
 		UpdatedAt: feed.UpdatedAt,
 	}
 }
+
+func toFeedsDTO(feeds []database.Feed) []Feed {
+	var objects []Feed
+	for index := range feeds {
+		objects = append(objects, toFeedDTO(feeds[index]))
+	}
+
+	return objects
+}

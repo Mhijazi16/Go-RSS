@@ -76,3 +76,13 @@ func (db *apiConfig) createFeed(w http.ResponseWriter, r *http.Request, user dat
 
 	respondWithJson(w, 201, toFeedDTO(feed))
 }
+
+func (db *apiConfig) getFeeds(w http.ResponseWriter, r *http.Request) {
+
+	feeds, err := db.DB.GetFeeds(r.Context())
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("failed to fetch feed, error: %s", err))
+	}
+
+	respondWithJson(w, 200, toFeedsDTO(feeds))
+}

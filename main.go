@@ -52,6 +52,7 @@ func main() {
 
 	feedRouter := chi.NewMux()
 	feedRouter.Post("/", apiCfg.authMiddleware(apiCfg.createFeed))
+	feedRouter.Get("/", apiCfg.getFeeds)
 
 	router.Mount("/v1/users", userRouter)
 	router.Mount("/v1/feeds", feedRouter)
